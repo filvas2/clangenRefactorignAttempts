@@ -711,10 +711,10 @@ class PatrolOutcome:
     def _handle_prey(self, patrol: "Patrol") -> str:
         """Handle giving prey"""
 
-        if not FRESHKILL_ACTIVE:
-            return ""
-
-        if not self.prey or game.clan.game_mode == "classic":
+        if (not FRESHKILL_ACTIVE
+            or not self.prey 
+            or game.clan.game_mode == "classic"
+        ):
             return ""
 
         basic_amount = PREY_REQUIREMENT["warrior"]
@@ -742,29 +742,19 @@ class PatrolOutcome:
         highest_hunter_tier = 0
         for cat in patrol.patrol_cats:
             total_amount += basic_amount
-            if (
-                cat.skills.primary.path == SkillPath.HUNTER
-                and cat.skills.primary.tier > 0
-            ):
-                level = cat.experience_level
-                tier = cat.skills.primary.tier
-                if tier > highest_hunter_tier:
-                    highest_hunter_tier = tier
-                total_amount += int(
-                    HUNTER_EXP_BONUS[level] * (HUNTER_BONUS[str(tier)] / 10 + 1)
-                )
-            elif (
-                cat.skills.secondary
-                and cat.skills.secondary.path == SkillPath.HUNTER
-                and cat.skills.secondary.tier > 0
-            ):
-                level = cat.experience_level
-                tier = cat.skills.secondary.tier
-                if tier > highest_hunter_tier:
-                    highest_hunter_tier = tier
-                total_amount += int(
-                    HUNTER_EXP_BONUS[level] * (HUNTER_BONUS[str(tier)] / 10 + 1)
-                )
+            for skill in [cat.skills.primary, cat.skills.secondary]:
+                if (
+                    skill
+                    and skill.path == SkillPath.HUNTER
+                    and skill.tier > 0
+                ):
+                    level = cat.experience_level
+                    tier = cat.skills.secondary.tier
+                    if tier > highest_hunter_tier:
+                        highest_hunter_tier = tier
+                    total_amount += int(
+                        HUNTER_EXP_BONUS[level] * (HUNTER_BONUS[str(tier)] / 10 + 1)
+                    )
 
         # additional hunter buff for expanded mode
         if game.clan.game_mode == "expanded" and highest_hunter_tier:
