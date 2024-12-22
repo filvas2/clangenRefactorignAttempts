@@ -103,11 +103,9 @@ class Pregnancy_Events:
             clan.clan_settings["same sex birth"],
             clan.clan_settings["same sex adoption"],
         )
-        if second_parent:
-            if not can_have_kits:
+        if second_parent and not can_have_kits:
                 return
-        else:
-            if not game.clan.clan_settings["single parentage"]:
+        elif not game.clan.clan_settings["single parentage"]:
                 return
 
         chance = Pregnancy_Events.get_balanced_kit_chance(
