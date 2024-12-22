@@ -426,13 +426,12 @@ class PatrolOutcome:
         else:
             gm_modifier = 1
 
-        base_exp = 0
         if "master" in [x.experience_level for x in patrol.patrol_cats]:
             max_boost = 10
         else:
             max_boost = 0
         patrol_exp = 2 * self.exp
-        gained_exp = patrol_exp + base_exp + max_boost
+        gained_exp = patrol_exp + max_boost
         gained_exp = max(
             gained_exp * (1 - 0.1 * len(patrol.patrol_cats)) / gm_modifier, 1
         )
