@@ -17,6 +17,7 @@ from scripts.events_module.patrol.patrol_event import PatrolEvent
 from scripts.events_module.patrol.patrol_outcome import PatrolOutcome
 from scripts.special_dates import get_special_date, contains_special_date_tag
 from scripts.utility import (
+    clamp,
     get_personality_compatibility,
     check_relationship_value,
     process_text,
@@ -857,11 +858,7 @@ class Patrol:
                 if needed_weight[0] <= patrol.weight < needed_weight[1]:
                     # get the amount of class sizes which can be increased
                     increment = int(adaption.split("_")[0])
-                    new_idx = prey_size.index(chosen_prey_size) + increment
-                    # check that the increment does not lead to a overflow
-                    new_idx = (
-                        new_idx if new_idx < len(prey_size) else len(prey_size) - 1
-                    )
+                    new_idx = clamp(prey_size.index(chosen_prey_size) + increment, 0, len(prey_size) - 1)
                     chosen_prey_size = deepcopy(prey_size[new_idx])
 
             # now count the outcomes + prey size
@@ -942,25 +939,12 @@ class Patrol:
             for i in self.patrol_cats
             if i not in [self.patrol_leader, self.random_cat]
         ]
-        if len(other_cats) >= 1:
-            replace_dict["o_c1"] = (
-                str(other_cats[0].name),
-                choice(other_cats[0].pronouns),
-            )
-        if len(other_cats) >= 2:
-            replace_dict["o_c2"] = (
-                str(other_cats[1].name),
-                choice(other_cats[1].pronouns),
-            )
-        if len(other_cats) >= 3:
-            replace_dict["o_c3"] = (
-                str(other_cats[2].name),
-                choice(other_cats[2].pronouns),
-            )
-        if len(other_cats) == 4:
-            replace_dict["o_c4"] = (
-                str(other_cats[3].name),
-                choice(other_cats[3].pronouns),
+
+        # 0-4 other cats
+        for cat_index in range(len(other_cats)):
+            replace_dict[f"o_c{cat_index +1}"] = (
+                str(other_cats[cat_index].name),
+                choice(other_cats[cat_index].pronouns),
             )
 
         # New Cats
@@ -968,7 +952,7 @@ class Patrol:
             if len(new_cats) == 1:
                 names = str(new_cats[0].name)
                 pronoun = choice(new_cats[0].pronouns)
-            elif len(new_cats) == 1:
+            elif len(new_cats) == 2:
                 names = f"{new_cats[0].name} and {new_cats[1].name}"
                 pronoun = Cat.default_pronouns[0]  # They/them for muliple cats
             else:
@@ -980,35 +964,11 @@ class Patrol:
 
             replace_dict[f"n_c:{i}"] = (names, pronoun)
 
-        if len(self.patrol_apprentices) > 0:
-            replace_dict["app1"] = (
-                str(self.patrol_apprentices[0].name),
-                choice(self.patrol_apprentices[0].pronouns),
-            )
-        if len(self.patrol_apprentices) > 1:
-            replace_dict["app2"] = (
-                str(self.patrol_apprentices[1].name),
-                choice(self.patrol_apprentices[1].pronouns),
-            )
-        if len(self.patrol_apprentices) > 2:
-            replace_dict["app3"] = (
-                str(self.patrol_apprentices[2].name),
-                choice(self.patrol_apprentices[2].pronouns),
-            )
-        if len(self.patrol_apprentices) > 3:
-            replace_dict["app4"] = (
-                str(self.patrol_apprentices[3].name),
-                choice(self.patrol_apprentices[3].pronouns),
-            )
-        if len(self.patrol_apprentices) > 4:
-            replace_dict["app5"] = (
-                str(self.patrol_apprentices[4].name),
-                choice(self.patrol_apprentices[4].pronouns),
-            )
-        if len(self.patrol_apprentices) > 5:
-            replace_dict["app6"] = (
-                str(self.patrol_apprentices[5].name),
-                choice(self.patrol_apprentices[5].pronouns),
+        # 0-6 apprentices
+        for apprentice_index in range(len(self.patrol_apprentices)):
+            replace_dict[f"app{apprentice_index + 1}"] = (
+                str(self.patrol_apprentices[apprentice_index].name),
+                choice(self.patrol_apprentices[apprentice_index].pronouns),
             )
 
         if stat_cat:
@@ -1019,7 +979,7 @@ class Patrol:
 
         other_clan_name = self.other_clan.name
         s = 0
-        for x in range(text.count("o_c_n")):
+        for _ in range(text.count("o_c_n")):
             if "o_c_n" in text:
                 for y in vowels:
                     if str(other_clan_name).startswith(y):
@@ -1042,7 +1002,7 @@ class Patrol:
         clan_name = game.clan.name
         s = 0
         pos = 0
-        for x in range(text.count("c_n")):
+        for _ in range(text.count("c_n")):
             if "c_n" in text:
                 for y in vowels:
                     if str(clan_name).startswith(y):
