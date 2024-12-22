@@ -159,21 +159,21 @@ class DisasterEvents():
 
     def disaster_text(self, text_list):
 
-        leader_exists = False
-        dep_exists = False
-        med_exists = False
+        leader_exists = True
+        dep_exists = True
+        med_exists = True
 
         leader = Cat.fetch_cat(game.clan.leader)
         deputy = Cat.fetch_cat(game.clan.deputy)
         med_cats = get_alive_status_cats(Cat, ["medicine cat", "medicine cat apprentice"], sort=True)
 
         # checking if there are cats of the specified rank
-        if not leader.dead and not leader.outside:
-            leader_exists = True
-        if not deputy.dead and not deputy.outside:
-            dep_exists = True
-        if med_cats:
-            med_exists = True
+        if not leader or leader.dead or leader.outside:
+            leader_exists = False
+        if not deputy or deputy.dead or deputy.outside:
+            dep_exists = False
+        if not med_cats:
+            med_exists = False
 
         # removing events that mention ranks if those ranks are not currently filled in the clan
         for event in text_list:
