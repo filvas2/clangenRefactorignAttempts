@@ -283,38 +283,34 @@ class Patrol:
         clan_size = int(len(game.clan.clan_cats))
         chance = 0
         # assigning other_clan relations
-        if clan_relations > 17:
-            clan_allies = True
-        elif clan_relations < 7:
+        if clan_relations <7:
             clan_hostile = True
-        elif 7 <= clan_relations <= 17:
+        elif clan_hostile <= 17:
             clan_neutral = True
-        # this is just for separating them a bit from the other patrols, it means they can always happen
-        other_clan_chance = 1
-        # chance for each kind of loner event to occur
-        small_clan = False
-        if not other_clan:
-            other_clan_chance = 0
-        if clan_size < 20:
-            small_clan = True
-        regular_chance = int(random.getrandbits(2))
-        hostile_chance = int(random.getrandbits(5))
+        else:
+            clan_allies = True
+        other_clan_chance = 0 if not other_clan else 1
+        small_clan = True if clan_size < 20 else False
+
+        
+        # 1/2 change
         welcoming_chance = int(random.getrandbits(1))
+        # 1/4 change
+        regular_chance = int(random.getrandbits(2))
+        # 1/32 change
+        hostile_chance = int(random.getrandbits(5))
+
+        chance = welcoming_chance
         if 1 <= int(reputation) <= 30:
             hostile_rep = True
-            if small_clan:
-                chance = welcoming_chance
-            else:
+            if not small_clan:
                 chance = hostile_chance
         elif 31 <= int(reputation) <= 70:
             neutral_rep = True
-            if small_clan:
-                chance = welcoming_chance
-            else:
+            if not small_clan:
                 chance = regular_chance
-        elif int(reputation) >= 71:
+        else:
             welcoming_rep = True
-            chance = welcoming_chance
 
         possible_patrols.extend(self.generate_patrol_events(self.HUNTING))
         possible_patrols.extend(self.generate_patrol_events(self.HUNTING_SZN))
@@ -330,7 +326,7 @@ class Patrol:
         possible_patrols.extend(self.generate_patrol_events(self.MEDCAT_GEN))
 
         if game_setting_disaster:
-            dis_chance = int(random.getrandbits(3))  # disaster patrol chance
+            dis_chance = int(random.getrandbits(3))  # 1/8 disaster patrol chance
             if dis_chance == 1:
                 possible_patrols.extend(self.generate_patrol_events(self.DISASTER))
 
