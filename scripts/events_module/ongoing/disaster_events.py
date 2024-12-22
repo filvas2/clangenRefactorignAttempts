@@ -49,11 +49,13 @@ class DisasterEvents():
                 continue
 
             print('still valid')
-            chance = 1
             if event.rarity == 'uncommon':
                 chance = 10
             elif event.rarity == 'rare':
                 chance = 20
+            else:
+                chance = 1
+
 
             if int(random.random() * chance):
                 continue
