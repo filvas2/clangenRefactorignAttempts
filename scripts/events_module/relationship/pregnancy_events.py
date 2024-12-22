@@ -32,13 +32,10 @@ class Pregnancy_Events:
     @staticmethod
     def set_biggest_family():
         """Gets the biggest family of the clan."""
-        biggest_family = None
+        biggest_family = []
         for cat in Cat.all_cats.values():
             ancestors = cat.get_relatives()
-            if not biggest_family:
-                biggest_family = ancestors
-                biggest_family.append(cat.ID)
-            elif len(biggest_family) < len(ancestors) + 1:
+            if len(biggest_family) < len(ancestors) + 1:
                 biggest_family = ancestors
                 biggest_family.append(cat.ID)
         Pregnancy_Events.biggest_family = biggest_family
