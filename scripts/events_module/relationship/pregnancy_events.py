@@ -126,15 +126,17 @@ class Pregnancy_Events:
     @staticmethod
     def handle_adoption(cat: Cat, other_cat=None, clan=game.clan):
         """Handle if the there is no pregnancy but the pair triggered kits chance."""
-        if other_cat and (
-            other_cat.dead or other_cat.outside or other_cat.birth_cooldown > 0
+        if (other_cat
+            and (
+                other_cat.dead
+                or other_cat.outside
+                or other_cat.birth_cooldown > 0
+                or other_cat.ID in clan.pregnancy_data
+            )
         ):
             return
 
         if cat.ID in clan.pregnancy_data:
-            return
-
-        if other_cat and other_cat.ID in clan.pregnancy_data:
             return
 
         # Gather adoptive parents, to feed into the
@@ -143,32 +145,34 @@ class Pregnancy_Events:
         if other_cat:
             adoptive_parents.append(other_cat.ID)
 
-        for _m in cat.mate:
-            if _m not in adoptive_parents:
-                adoptive_parents.append(_m)
+        for _mate in cat.mate:
+            if _mate not in adoptive_parents:
+                adoptive_parents.append(_mate)
 
         if other_cat:
-            for _m in other_cat.mate:
-                if _m not in adoptive_parents:
-                    adoptive_parents.append(_m)
+            for _mate in other_cat.mate:
+                if _mate not in adoptive_parents:
+                    adoptive_parents.append(_mate)
 
         amount = Pregnancy_Events.get_amount_of_kits(cat)
         kits = Pregnancy_Events.get_kits(
             amount, None, None, clan, adoptive_parents=adoptive_parents
         )
 
-        insert = "this should not display"
-        insert2 = "this should not display"
+        kitten_s = "this should not display"
+        it_them = "this should not display"
         if amount == 1:
-            insert = "a single kitten"
-            insert2 = "it"
+            kitten_s = "a single kitten"
+            it_them = "it"
         if amount > 1:
-            insert = f"a litter of {amount} kits"
-            insert2 = "them"
+            kitten_s = f"a litter of {amount} kits"
+            it_them = "them"
 
-        print_event = f"{cat.name} found {insert} and decides to adopt {insert2}."
+        print_event = f"{cat.name} found {kitten_s} and decides to adopt {it_them}."
         if other_cat:
-            print_event = f"{cat.name} and {other_cat.name} found {insert} and decided to adopt {insert2}."
+            print_event = (
+                f"{cat.name} and {other_cat.name} found {kitten_s} and decided to adopt {it_them}."
+            )
 
         cats_involved = [cat.ID]
         if other_cat:
