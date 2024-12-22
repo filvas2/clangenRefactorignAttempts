@@ -76,8 +76,8 @@ class DisasterEvents():
         """
         handles the progression for a primary disaster
         """
-        # decreasing duration, default decrease is 1 with a chance to decrease by 2
-        if not int(random.random() * 10):
+        # decreasing duration, default decrease is 1 with 1/10 chance to decrease by 2
+        if random.randint(1,10) == 1:
             game.clan.primary_disaster.current_duration += 2
         else:
             game.clan.primary_disaster.current_duration += 1
@@ -135,7 +135,8 @@ class DisasterEvents():
         """
         handles the progression for a secondary disaster
         """
-        if not int(random.random() * 10):
+        # decreasing duration, default decrease is 1 with 1/10 chance to decrease by 2
+        if random.randint(1,10) == 1:
             game.clan.secondary_disaster.current_duration += 2
         else:
             game.clan.secondary_disaster.current_duration += 1
