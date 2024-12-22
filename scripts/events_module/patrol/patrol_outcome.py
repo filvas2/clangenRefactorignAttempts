@@ -480,16 +480,16 @@ class PatrolOutcome:
                 if "all_lives" in self.dead_cats:
                     game.clan.leader_lives = 0
                     results.append(f"{_cat.name} lost all of their lives.")
-                elif "some_lives" in self.dead_cats:
-                    lives_lost = random.randint(1, max(1, game.clan.leader_lives - 1))
+                else:
+                    if "some_lives" in self.dead_cats:
+                        lives_lost = random.randint(1, max(1, game.clan.leader_lives - 1))
+                    else:
+                        lives_lost = 1
                     game.clan.leader_lives -= lives_lost
                     if lives_lost == 1:
                         results.append(f"{_cat.name} lost one life.")
                     else:
                         results.append(f"{_cat.name} lost {lives_lost} lives.")
-                else:
-                    game.clan.leader_lives -= 1
-                    results.append(f"{_cat.name} lost one life.")
             else:
                 results.append(f"{_cat.name} died.")
 
