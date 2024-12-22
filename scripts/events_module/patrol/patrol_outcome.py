@@ -811,20 +811,21 @@ class PatrolOutcome:
         # Check to see if any young litters joined with alive parents.
         # If so, see if recovering from birth condition is needed
         # and give the condition
-        for sub in patrol.new_cats:
-            if sub[0].moons < 3:
+        for possible_kitten in patrol.new_cats:
+            #If cat is kitten
+            if possible_kitten[0].moons < 3:
                 # Search for parent
-                for sub_sub in patrol.new_cats:
+                for possible_parent in patrol.new_cats:
                     if (
-                        sub_sub[0] != sub[0]
+                        possible_parent[0] != possible_kitten[0]
                         and (
-                            sub_sub[0].gender == "female"
+                            possible_parent[0].gender == "female"
                             or game.clan.clan_settings["same sex birth"]
                         )
-                        and sub_sub[0].ID in (sub[0].parent1, sub[0].parent2)
-                        and not (sub_sub[0].dead or sub_sub[0].outside)
+                        and possible_parent[0].ID in (possible_kitten[0].parent1, possible_kitten[0].parent2)
+                        and not (possible_parent[0].dead or possible_parent[0].outside)
                     ):
-                        sub_sub[0].get_injured("recovering from birth")
+                        possible_parent[0].get_injured("recovering from birth")
                         break  # Break - only one parent ever gives birth
 
         return " ".join(results)
