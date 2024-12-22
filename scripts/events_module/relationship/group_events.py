@@ -555,44 +555,33 @@ class GroupEvents:
         dictionary = chosen_interaction.general_reaction
 
         # set the amount
-        romantic = 0
-        platonic = 0
-        dislike = 0
-        admiration = 0
-        comfortable = 0
-        jealousy = 0
-        trust = 0
-        if "romantic" in dictionary and dictionary["romantic"] != "neutral":
-            romantic = amount if dictionary["romantic"] == "increase" else amount * -1
-        if "platonic" in dictionary and dictionary["platonic"] != "neutral":
-            platonic = amount if dictionary["platonic"] == "increase" else amount * -1
-        if "dislike" in dictionary and dictionary["dislike"] != "neutral":
-            platonic = amount if dictionary["dislike"] == "increase" else amount * -1
-        if "admiration" in dictionary and dictionary["admiration"] != "neutral":
-            platonic = amount if dictionary["admiration"] == "increase" else amount * -1
-        if "comfortable" in dictionary and dictionary["comfortable"] != "neutral":
-            platonic = (
-                amount if dictionary["comfortable"] == "increase" else amount * -1
-            )
-        if "jealousy" in dictionary and dictionary["jealousy"] != "neutral":
-            platonic = amount if dictionary["jealousy"] == "increase" else amount * -1
-        if "trust" in dictionary and dictionary["trust"] != "neutral":
-            platonic = amount if dictionary["trust"] == "increase" else amount * -1
+        relationship_mod_val = {
+            "romantic": 0,
+            "platonic": 0,
+            "dislike": 0,
+            "admiration": 0,
+            "comfortable": 0,
+            "jealousy": 0,
+            "trust": 0
+        }
+        for key in relationship_mod_val.keys():
+            if key in dictionary and dictionary[key] != "neutral":
+                relationship_mod_val[key] = amount if dictionary[key] == "increase" else amount * -1
+                
         abbreviations_cat = []
-
         for cat in abbreviations_cat_id:
             abbreviations_cat.append(Cat.fetch_cat(cat))
         for inter_cat in abbreviations_cat:
             change_relationship_values(
                 cats_from=[inter_cat],
                 cats_to=list(abbreviations_cat),
-                romantic_love=romantic,
-                platonic_like=platonic,
-                dislike=dislike,
-                admiration=admiration,
-                comfortable=comfortable,
-                jealousy=jealousy,
-                trust=trust,
+                romantic_love=relationship_mod_val["romantic"],
+                platonic_like=relationship_mod_val["platonic"],
+                dislike=relationship_mod_val["dislike"],
+                admiration=relationship_mod_val["admiration"],
+                comfortable=relationship_mod_val["comfortable"],
+                jealousy=relationship_mod_val["jealousy"],
+                trust=relationship_mod_val["trust"],
             )
 
     @staticmethod
