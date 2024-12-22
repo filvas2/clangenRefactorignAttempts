@@ -227,7 +227,8 @@ class GroupEvents:
     def get_filtered_interactions(
         interactions: list, amount: int, interact_cats: list, abbreviations_cat_id: dict
     ):
-        """First assign which cat is which abbreviation, then filtered interaction list based on all constraints, which include the other cats.
+        """First assign which cat is which abbreviation, then filtered interaction list 
+        based on all constraints, which include the other cats.
 
         Parameters
         ----------
@@ -258,7 +259,7 @@ class GroupEvents:
         )
 
         # check if any abbreviations_cat_ids is None, if so return
-        not_none = [abbr != None for abbr in abbreviations_cat_id.values()]
+        not_none = [abbr is not None for abbr in abbreviations_cat_id.values()]
         if not all(not_none):
             return []
 
@@ -271,7 +272,8 @@ class GroupEvents:
             if interact.id not in abbr_per_interaction.keys():
                 continue
 
-            # check how the cats are and if they are fulfill the constraints like: status, trait, skill, ...
+            # check how the cats are and if they are fulfill the constraints like:
+            # status, trait, skill, ...
             cat_allow_interaction = GroupEvents.cat_allow_interaction(
                 interact, abbreviations_cat_id
             )
@@ -367,16 +369,11 @@ class GroupEvents:
                     ):
                         dictionary[abbreviation].append(cat_id)
 
-                        if (
-                            cat_id in cat_abbreviations_counter
-                            and abbreviation in cat_abbreviations_counter[cat_id]
-                        ):
-                            cat_abbreviations_counter[cat_id][abbreviation] += 1
-                        elif (
-                            cat_id in cat_abbreviations_counter
-                            and abbreviation not in cat_abbreviations_counter[cat_id]
-                        ):
-                            cat_abbreviations_counter[cat_id][abbreviation] = 1
+                        if(cat_id in cat_abbreviations_counter):
+                            if (abbreviation in cat_abbreviations_counter[cat_id]):
+                                cat_abbreviations_counter[cat_id][abbreviation] += 1
+                            elif (abbreviation not in cat_abbreviations_counter[cat_id]):
+                                cat_abbreviations_counter[cat_id][abbreviation] = 1
                         else:
                             cat_abbreviations_counter[cat_id] = {}
                             cat_abbreviations_counter[cat_id][abbreviation] = 1
