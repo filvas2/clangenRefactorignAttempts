@@ -130,11 +130,11 @@ class Patrol:
         Returns
         ----------
         """
+
+        for patrol_status in ["healer cats", "all apprentices", "normal adult"]:
+            self.patrol_statuses[patrol_status] = 0
         for cat in patrol_cats:
             self.patrol_cats.append(cat)
-
-            if cat.status == "apprentice" or cat.status == "medicine cat apprentice":
-                self.patrol_apprentices.append(cat)
 
             self.patrol_status_list.append(cat.status)
 
@@ -145,25 +145,20 @@ class Patrol:
 
             # Combined patrol_statuses catagories
             if cat.status in ("medicine cat", "medicine cat apprentice"):
-                if "healer cats" in self.patrol_statuses:
-                    self.patrol_statuses["healer cats"] += 1
-                else:
-                    self.patrol_statuses["healer cats"] = 1
+                self.patrol_statuses["healer cats"] += 1
 
             if cat.status in ("apprentice", "medicine cat apprentice"):
-                if "all apprentices" in self.patrol_statuses:
-                    self.patrol_statuses["all apprentices"] += 1
-                else:
-                    self.patrol_statuses["all apprentices"] = 1
+                self.patrol_apprentices.append(cat)
+                self.patrol_statuses["all apprentices"] += 1
 
             if cat.status in ("warrior", "deputy", "leader") and cat.age != "adolescent":
-                if "normal adult" in self.patrol_statuses:
-                    self.patrol_statuses["normal adult"] += 1
-                else:
-                    self.patrol_statuses["normal adult"] = 1
+                self.patrol_statuses["normal adult"] += 1
 
             game.patrolled.append(cat.ID)
-
+        # remove empty Combined patrol_statuses catagories
+        for patrol_status in ["healer cats", "all apprentices", "normal adult"]:
+            if self.patrol_statuses[patrol_status] == 0:
+                del self.patrol_statuses[patrol_status]
         # PATROL LEADER AND RANDOM CAT CAN NOT CHANGE AFTER SET-UP
 
         # DETERMINE PATROL LEADER
