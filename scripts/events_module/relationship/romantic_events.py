@@ -80,33 +80,21 @@ class Romantic_Events:
     ROMANTIC_RELEVANT_INTERACTIONS = {}
     for val_type, dictionary in INTERACTION_MASTER_DICT.items():
         ROMANTIC_RELEVANT_INTERACTIONS[val_type] = {}
-
-        # if it's the romantic interaction type add all interactions
-        if val_type == "romantic":
-            ROMANTIC_RELEVANT_INTERACTIONS[val_type]["increase"] = dictionary[
-                "increase"
-            ]
-            ROMANTIC_RELEVANT_INTERACTIONS[val_type]["decrease"] = dictionary[
-                "decrease"
-            ]
-        else:
-            increase = []
-            for interaction in dictionary["increase"]:
-                romantic = [
-                    "romantic" in tag for tag in interaction.relationship_constraint
+        for modification in interaction_value_modifications:
+            # if it's the romantic interaction type add all interactions
+            if val_type == "romantic":
+                ROMANTIC_RELEVANT_INTERACTIONS[val_type][modification] = dictionary[
+                    modification
                 ]
-                if any(romantic):
-                    increase.append(interaction)
-            ROMANTIC_RELEVANT_INTERACTIONS[val_type]["increase"] = increase
-
-            decrease = []
-            for interaction in dictionary["decrease"]:
-                romantic = [
-                    "romantic" in tag for tag in interaction.relationship_constraint
-                ]
-                if any(romantic):
-                    decrease.append(interaction)
-            ROMANTIC_RELEVANT_INTERACTIONS[val_type]["decrease"] = decrease
+            else:
+                modification_list = []
+                for interaction in dictionary[modification]:
+                    romantic = [
+                        "romantic" in tag for tag in interaction.relationship_constraint
+                    ]
+                    if any(romantic):
+                        modification_list.append(interaction)
+                ROMANTIC_RELEVANT_INTERACTIONS[val_type][modification] = modification_list
 
     # resort the first generated overview dictionary to only "positive" and "negative" interactions
     ROMANTIC_INTERACTIONS = {"positive": [], "negative": []}
