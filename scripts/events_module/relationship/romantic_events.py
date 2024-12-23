@@ -297,10 +297,10 @@ class Romantic_Events:
         if not cat.relationships:
             return
         subset = [
-            Cat.fetch_cat(x)
-            for x in cat.relationships
-            if isinstance(Cat.fetch_cat(x), Cat)
-            and not (Cat.fetch_cat(x).dead or Cat.fetch_cat(x).outside)
+            Cat.fetch_cat(cat_ID)
+            for cat_ID in cat.relationships
+            if isinstance(Cat.fetch_cat(cat_ID), Cat)
+            and not (Cat.fetch_cat(cat_ID).dead or Cat.fetch_cat(cat_ID).outside)
         ]
         if not subset:
             return
@@ -308,7 +308,6 @@ class Romantic_Events:
         subset = random.sample(subset, max(int(len(subset) / 3), 1))
 
         for other_cat in subset:
-            relationship = cat.relationships.get(other_cat.ID)
             flag = Romantic_Events.handle_new_mates(cat, other_cat)
             if flag:
                 return
