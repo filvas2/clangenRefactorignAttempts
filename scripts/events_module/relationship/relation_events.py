@@ -227,7 +227,9 @@ class Relation_Events:
         for new_cat in new_cats:
             same_age_cats = get_cats_same_age(Cat, new_cat)
             alive_cats = [
-                i for i in new_cat.all_cats.values() if not i.dead and not i.outside
+                cat 
+                for cat in new_cat.all_cats.values() 
+                if not (cat.dead or cat.outside)
             ]
             number = game.config["new_cat"]["cat_amount_welcoming"]
 
@@ -238,7 +240,7 @@ class Relation_Events:
                     Welcoming_Events.welcome_cat(age_cat, new_cat)
 
                 rest_number = number - len(same_age_cats)
-                same_age_ids = [c.ID for c in same_age_cats]
+                same_age_ids = [cat.ID for cat in same_age_cats]
                 alive_cats = [
                     alive_cat
                     for alive_cat in alive_cats
