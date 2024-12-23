@@ -247,6 +247,7 @@ class Pregnancy_Events:
             cat.gender == "male"
             and other_cat is not None
             and other_cat.gender == "female"
+            and not clan.clan_settings["same sex birth"]
         ):
             pregnant_cat = other_cat
             second_parent = cat
