@@ -297,10 +297,10 @@ class Romantic_Events:
         if not cat.relationships:
             return
         subset = [
-            Cat.fetch_cat(cat_ID)
-            for cat_ID in cat.relationships
-            if isinstance(Cat.fetch_cat(cat_ID), Cat)
-            and not (Cat.fetch_cat(cat_ID).dead or Cat.fetch_cat(cat_ID).outside)
+            Cat.fetch_cat(cat_id)
+            for cat_id in cat.relationships
+            if isinstance(Cat.fetch_cat(cat_id), Cat)
+            and not (Cat.fetch_cat(cat_id).dead or Cat.fetch_cat(cat_id).outside)
         ]
         if not subset:
             return
@@ -316,8 +316,8 @@ class Romantic_Events:
     def handle_breakup_events(cat: Cat):
         """Triggers and handles any events that results in a breakup"""
 
-        for x in cat.mate:
-            mate_ob = Cat.fetch_cat(x)
+        for mate_id in cat.mate:
+            mate_ob = Cat.fetch_cat(mate_id)
             if not isinstance(mate_ob, Cat):
                 continue
 
