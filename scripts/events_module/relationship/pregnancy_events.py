@@ -535,23 +535,24 @@ class Pregnancy_Events:
         returns:
         parent can have kits, kits are adopted
         """
-
+        have_kits = True
+        adopted = False
         # Checks for second parent alone:
         if not Pregnancy_Events.check_if_can_have_kits(
             second_parent, single_parentage, allow_affair
         ):
-            return False, False
+            have_kits = False
 
         # Check to see if the pair can have kits.
         if cat.gender == second_parent.gender:
             if same_sex_birth:
-                return True, False
+                pass
             elif not same_sex_adoption:
-                return False, False
+                have_kits = False
             else:
-                return True, True
+                adopted = True
 
-        return True, False
+        return have_kits, adopted
 
     # ---------------------------------------------------------------------------- #
     #                               getter functions                               #
