@@ -383,38 +383,36 @@ class Pregnancy_Events:
             if other_cat and not other_cat.outside:
                 adding_text = choice(events["birth"]["outside_in_clan"])
             event_list.append(adding_text)
-        elif other_cat.ID in cat.mate and not other_cat.dead and not other_cat.outside:
-            involved_cats.append(other_cat.ID)
-            event_list.append(choice(events["birth"]["two_parents"]))
-        elif other_cat.ID in cat.mate and other_cat.dead or other_cat.outside:
-            involved_cats.append(other_cat.ID)
-            event_list.append(choice(events["birth"]["dead_mate"]))
+        elif other_cat.ID in cat.mate:
+            if not other_cat.dead and not other_cat.outside:
+                involved_cats.append(other_cat.ID)
+                event_list.append(choice(events["birth"]["two_parents"]))
+            elif other_cat.dead or other_cat.outside:
+                involved_cats.append(other_cat.ID)
+                event_list.append(choice(events["birth"]["dead_mate"]))
         elif len(cat.mate) < 1 and len(other_cat.mate) < 1 and not other_cat.dead:
             involved_cats.append(other_cat.ID)
             event_list.append(choice(events["birth"]["both_unmated"]))
-        elif (
-            len(cat.mate) > 0 and other_cat.ID not in cat.mate and not other_cat.dead
-        ) or (
-            len(other_cat.mate) > 0
-            and cat.ID not in other_cat.mate
-            and not other_cat.dead
-        ):
-            involved_cats.append(other_cat.ID)
-            event_list.append(choice(events["birth"]["affair"]))
-            if len(cat.mate) > 0:
-                event_list.append(choice(events["birth"]["affair_mated"]))
+        elif not other_cat.dead:
+            if(
+                len(cat.mate) > 0 and other_cat.ID not in cat.mate
+               ) or (
+                len(other_cat.mate) > 0 and cat.ID not in other_cat.mate
+            ):
+                involved_cats.append(other_cat.ID)
+                event_list.append(choice(events["birth"]["affair"]))
+                if len(cat.mate) > 0:
+                    event_list.append(choice(events["birth"]["affair_mated"]))
         else:
             event_list.append(choice(events["birth"]["unmated_parent"]))
 
         involved_cats += [k.ID for k in kits]
 
-        if clan.game_mode != "classic":
-            try:
-                death_chance = cat.injuries["pregnant"]["mortality"]
-            except:
-                death_chance = 40
+        if clan.game_mode != "classic" and "pregnant" in cat.injuries:
+            death_chance = cat.injuries["pregnant"]["mortality"]
         else:
             death_chance = 40
+
         if not int(
             random.random() * death_chance
         ):  # chance for a cat to die during childbirth
