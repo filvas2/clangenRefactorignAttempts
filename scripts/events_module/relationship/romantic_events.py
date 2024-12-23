@@ -43,6 +43,8 @@ class Romantic_Events:
     #         because there may be less romantic/mate relevant interactions,       #
     #        the dictionary will be ordered in only 'positive' and 'negative'      #
     # ---------------------------------------------------------------------------- #
+    
+    interaction_value_modifications = ["increase","decrease"]
 
     # ---------------------------------------------------------------------------- #
     #                                     MATE                                     #
@@ -50,7 +52,6 @@ class Romantic_Events:
 
     # Use the overall master interaction dictionary and filter for mate tag
     MATE_RELEVANT_INTERACTIONS = {}
-    interaction_value_modifications = ["increase","decrease"]
     for val_type, dictionary in INTERACTION_MASTER_DICT.items():
         MATE_RELEVANT_INTERACTIONS[val_type] = {}
         for modification in interaction_value_modifications:
@@ -239,11 +240,14 @@ class Romantic_Events:
         # extract intensity from the interaction
         intensity = getattr(chosen_interaction, "intensity", "neutral")
 
-        effect = " (neutral effect)"
-        if in_de_crease != "neutral" and positive:
-            effect = f" ({intensity} positive effect)"
-        if in_de_crease != "neutral" and not positive:
-            effect = f" ({intensity} negative effect)"
+        
+        if in_de_crease != "neutral":
+            if positive:
+                effect = f" ({intensity} positive effect)"
+            else:
+                effect = f" ({intensity} negative effect)"
+        else:
+            effect = " (neutral effect)"
 
         interaction_str = interaction_str + effect
 
