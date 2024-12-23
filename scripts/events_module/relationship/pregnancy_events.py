@@ -557,7 +557,7 @@ class Pregnancy_Events:
     # ---------------------------------------------------------------------------- #
     #                               getter functions                               #
     # ---------------------------------------------------------------------------- #
-
+    
     @staticmethod
     def get_second_parent(cat, clan):
         """
@@ -665,19 +665,17 @@ class Pregnancy_Events:
             cat.relationships.values(), exclude_mate=True, potential_mate=True
         )
 
-        if mate and highest_romantic_relation:
-            # Love affair calculation when the cat has a mate
-            chance_love_affair = Pregnancy_Events.get_love_affair_chance(
-                mate_relation, highest_romantic_relation
-            )
-            if not chance_love_affair or not int(random.random() * chance_love_affair):
-                if samesex or cat.gender != highest_romantic_relation.cat_to.gender:
-                    return highest_romantic_relation.cat_to
-        elif highest_romantic_relation:
-            # Love affair change if the cat doesn't have a mate:
-            chance_love_affair = Pregnancy_Events.get_unmated_love_affair_chance(
-                highest_romantic_relation
-            )
+        if highest_romantic_relation:
+            if mate:
+                # Love affair calculation when the cat has a mate
+                chance_love_affair = Pregnancy_Events.get_love_affair_chance(
+                    mate_relation, highest_romantic_relation
+                )
+            else:
+                 # Love affair change if the cat doesn't have a mate:
+                chance_love_affair = Pregnancy_Events.get_unmated_love_affair_chance(
+                    highest_romantic_relation
+                )
             if not chance_love_affair or not int(random.random() * chance_love_affair):
                 if samesex or cat.gender != highest_romantic_relation.cat_to.gender:
                     return highest_romantic_relation.cat_to
