@@ -50,22 +50,17 @@ class Romantic_Events:
 
     # Use the overall master interaction dictionary and filter for mate tag
     MATE_RELEVANT_INTERACTIONS = {}
+    interaction_value_modifications = ["increase","decrease"]
     for val_type, dictionary in INTERACTION_MASTER_DICT.items():
         MATE_RELEVANT_INTERACTIONS[val_type] = {}
-        MATE_RELEVANT_INTERACTIONS[val_type]["increase"] = list(
-            filter(
-                lambda inter: "mates" in inter.relationship_constraint
-                and "not_mates" not in inter.relationship_constraint,
-                dictionary["increase"],
+        for modification in interaction_value_modifications:
+            MATE_RELEVANT_INTERACTIONS[val_type][modification] = list(
+                filter(
+                    lambda inter: "mates" in inter.relationship_constraint
+                    and "not_mates" not in inter.relationship_constraint,
+                    dictionary[modification],
+                )
             )
-        )
-        MATE_RELEVANT_INTERACTIONS[val_type]["decrease"] = list(
-            filter(
-                lambda inter: "mates" in inter.relationship_constraint
-                and "not_mates" not in inter.relationship_constraint,
-                dictionary["decrease"],
-            )
-        )
 
     # resort the first generated overview dictionary to only "positive" and "negative" interactions
     MATE_INTERACTIONS = {"positive": [], "negative": []}
