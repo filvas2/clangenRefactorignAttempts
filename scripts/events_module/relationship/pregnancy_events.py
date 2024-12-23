@@ -719,18 +719,18 @@ class Pregnancy_Events:
         # as adoptive parents.
         all_adoptive_parents = []
         birth_parents = [i.ID for i in (cat, other_cat) if i]
-        for _par in (cat, other_cat):
-            if not _par:
+        for _parent in (cat, other_cat):
+            if not _parent:
                 continue
-            for _m in _par.mate:
-                if _m not in birth_parents and _m not in all_adoptive_parents:
-                    all_adoptive_parents.append(_m)
+            for _mate in _parent.mate:
+                if _mate not in birth_parents and _mate not in all_adoptive_parents:
+                    all_adoptive_parents.append(_mate)
 
         # Then, add any additional adoptive parents that were provided passed directly into the
         # function.
-        for _m in adoptive_parents:
-            if _m not in all_adoptive_parents:
-                all_adoptive_parents.append(_m)
+        for _mate in adoptive_parents:
+            if _mate not in all_adoptive_parents:
+                all_adoptive_parents.append(_mate)
 
         #############################
 
@@ -810,23 +810,23 @@ class Pregnancy_Events:
                     parent_to_kit = game.config["new_cat"]["parent_buff"][
                         "parent_to_kit"
                     ]
-                    y = random.randrange(0, 15)
+                    relation_variance = random.randrange(0, 15)
                     start_relation = Relationship(the_cat, kit, False, True)
-                    start_relation.platonic_like += parent_to_kit["platonic"] + y
-                    start_relation.comfortable = parent_to_kit["comfortable"] + y
-                    start_relation.admiration = parent_to_kit["admiration"] + y
-                    start_relation.trust = parent_to_kit["trust"] + y
+                    start_relation.platonic_like += parent_to_kit["platonic"] + relation_variance
+                    start_relation.comfortable = parent_to_kit["comfortable"] + relation_variance
+                    start_relation.admiration = parent_to_kit["admiration"] + relation_variance
+                    start_relation.trust = parent_to_kit["trust"] + relation_variance
                     the_cat.relationships[kit.ID] = start_relation
 
                     kit_to_parent = game.config["new_cat"]["parent_buff"][
                         "kit_to_parent"
                     ]
-                    y = random.randrange(0, 15)
+                    relation_variance = random.randrange(0, 15)
                     start_relation = Relationship(kit, the_cat, False, True)
-                    start_relation.platonic_like += kit_to_parent["platonic"] + y
-                    start_relation.comfortable = kit_to_parent["comfortable"] + y
-                    start_relation.admiration = kit_to_parent["admiration"] + y
-                    start_relation.trust = kit_to_parent["trust"] + y
+                    start_relation.platonic_like += kit_to_parent["platonic"] + relation_variance
+                    start_relation.comfortable = kit_to_parent["comfortable"] + relation_variance
+                    start_relation.admiration = kit_to_parent["admiration"] + relation_variance
+                    start_relation.trust = kit_to_parent["trust"] + relation_variance
                     kit.relationships[the_cat.ID] = start_relation
                 else:
                     the_cat.relationships[kit.ID] = Relationship(the_cat, kit)
@@ -843,12 +843,12 @@ class Pregnancy_Events:
         for kitten in all_kitten:
             # update/buff the relationship towards the siblings
             for second_kitten in all_kitten:
-                y = random.randrange(0, 10)
+                relation_variance = random.randrange(0, 10)
                 if second_kitten.ID == kitten.ID:
                     continue
-                kitten.relationships[second_kitten.ID].platonic_like += 20 + y
-                kitten.relationships[second_kitten.ID].comfortable += 10 + y
-                kitten.relationships[second_kitten.ID].trust += 10 + y
+                kitten.relationships[second_kitten.ID].platonic_like += 20 + relation_variance
+                kitten.relationships[second_kitten.ID].comfortable += 10 + relation_variance
+                kitten.relationships[second_kitten.ID].trust += 10 + relation_variance
 
             kitten.create_inheritance_new_cat()  # Calculate inheritance.
 
@@ -963,7 +963,7 @@ class Pregnancy_Events:
         if difference < 0:
             # If the average love between affair partner is greater than the average love between the mate
             affair_chance = 10
-            difference = -difference
+            difference = abs(difference)
 
             if difference > 30:
                 affair_chance -= 7
@@ -1039,7 +1039,10 @@ class Pregnancy_Events:
         # CURRENT CAT AMOUNT
         # - increase the inverse chance if the clan is bigger
         living_cats = len(
-            [i for i in Cat.all_cats.values() if not (i.dead or i.outside or i.exiled)]
+            [cat 
+             for cat in Cat.all_cats.values() 
+             if not (cat.dead or cat.outside or cat.exiled)
+            ]
         )
         if living_cats < 10:
             inverse_chance = int(inverse_chance * 0.5)
