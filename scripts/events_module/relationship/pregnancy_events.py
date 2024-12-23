@@ -488,13 +488,13 @@ class Pregnancy_Events:
     @staticmethod
     def check_if_can_have_kits(cat, single_parentage, allow_affair):
         """Check if the given cat can have kits, see for age, birth-cooldown and so on."""
-        if not cat:
-            return False
-
-        if cat.birth_cooldown > 0:
-            return False
-
-        if "recovering from birth" in cat.injuries:
+        if (
+            not cat
+            or cat.birth_cooldown > 0
+            or "recovering from birth" in cat.injuries
+            or cat.no_kits
+            or cat.dead
+        ):
             return False
 
         # decide chances of having kits, and if it's possible at all.
@@ -502,7 +502,7 @@ class Pregnancy_Events:
         not_correct_age = (
             cat.age in ["newborn", "kitten", "adolescent"] or cat.moons < 15
         )
-        if not_correct_age or cat.no_kits or cat.dead:
+        if not_correct_age:
             return False
 
         # check for mate
