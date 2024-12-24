@@ -944,9 +944,6 @@ class Patrol:
             if len(new_cats) == 1:
                 names = str(new_cats[0].name)
                 pronoun = choice(new_cats[0].pronouns)
-            elif len(new_cats) == 2:
-                names = f"{new_cats[0].name} and {new_cats[1].name}"
-                pronoun = Cat.default_pronouns[0]  # They/them for muliple cats
             else:
                 names = adjust_list_text([str(cat.name) for cat in new_cats])
                 pronoun = localization.get_new_pronouns("default plural")
