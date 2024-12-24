@@ -379,9 +379,6 @@ class Romantic_Events:
         if cat_from.no_mates or cat_to.no_mates:
             return False
 
-        if cat_to.no_mates or cat_from.no_mates:
-            return False
-
         if not Romantic_Events.check_if_breakup(cat_from, cat_to):
             return False
 
@@ -392,30 +389,26 @@ class Romantic_Events:
         # TODO : more varied breakup text.
         cat_from.unset_mate(cat_to, breakup=False)
 
+        realtionships = []
         if cat_to.ID in cat_from.relationships:
-            relationship_from = cat_from.relationships[cat_to.ID]
+            realtionships.append(cat_from.relationships[cat_to.ID])
         else:
-            relationship_from = cat_from.create_one_relationship(cat_to)
+            realtionships.append(cat_from.create_one_relationship(cat_to))
 
         if cat_from.ID in cat_to.relationships:
-            relationship_to = cat_to.relationships[cat_from.ID]
+            realtionships.append(cat_to.relationships[cat_from.ID])
         else:
-            relationship_to = cat_to.create_one_relationship(cat_from)
+            realtionships.append(cat_to.create_one_relationship(cat_from))
 
-        # These are large decreases - they are to prevent becoming mates again on the same moon.
-        relationship_to.romantic_love -= 15
-        relationship_from.romantic_love -= 15
-        relationship_to.comfortable -= 10
-        relationship_from.comfortable -= 10
-        if had_fight:
-            relationship_to.romantic_love -= 5
-            relationship_from.romantic_love -= 5
-            relationship_from.platonic_like -= 10
-            relationship_to.platonic_like -= 10
-            relationship_from.trust -= 10
-            relationship_to.trust -= 10
-            relationship_to.dislike += 10
-            relationship_from.dislike += 10
+        for realtionship in realtionships:
+            # These are large decreases - they are to prevent becoming mates again on the same moon.
+            realtionship.romantic_love -= 15
+            realtionship.comfortable -= 10
+            if had_fight:
+                realtionship.romantic_love -= 5
+                realtionship.platonic_like -= 10
+                realtionship.trust -= 10
+                realtionship.dislike += 10
 
         if had_fight:
             text = f"{cat_from.name} and {cat_to.name} had a huge fight and broke up."
