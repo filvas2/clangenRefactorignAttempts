@@ -105,28 +105,25 @@ class Welcoming_Events:
 
         # add to relationship logs
         if new_cat.ID in clan_cat.relationships:
+            cats_str = f" - {clan_cat.name} was {clan_cat.moons} "
             if clan_cat.age == 1:
-                clan_cat.relationships[new_cat.ID].log.append(
-                    interaction_str
-                    + f" - {clan_cat.name} was {clan_cat.moons} moons old"
-                )
+                cats_str += "moon old"
             else:
-                clan_cat.relationships[new_cat.ID].log.append(
-                    interaction_str
-                    + f" - {clan_cat.name} was {clan_cat.moons} moons old"
-                )
-
+                cats_str += "moons old"
+            clan_cat.relationships[new_cat.ID].log.append(
+                interaction_str + cats_str
+            )
             new_cat.relationships[clan_cat.ID].link_relationship()
 
         if clan_cat.ID in new_cat.relationships:
-            if new_cat.age == 1:
-                new_cat.relationships[clan_cat.ID].log.append(
-                    interaction_str + f" - {new_cat.name} was {new_cat.moons} moon old"
-                )
+            cats_str = f" - {new_cat.name} was {new_cat.moons} "
+            if clan_cat.age == 1:
+                cats_str += "moon old"
             else:
-                new_cat.relationships[clan_cat.ID].log.append(
-                    interaction_str + f" - {new_cat.name} was {new_cat.moons} moons old"
-                )
+                cats_str += "moons old"
+            new_cat.relationships[clan_cat.ID].log.append(
+                interaction_str + cats_str
+            )
 
     @staticmethod
     def filter_welcome_interactions(welcome_interactions: list, new_cat: Cat) -> list:
