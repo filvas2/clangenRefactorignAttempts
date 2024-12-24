@@ -597,7 +597,8 @@ class Romantic_Events:
         alive_inclan_to_mates = [
             mate
             for mate in cat_to.mate
-            if not cat_to.fetch_cat(mate).dead and not cat_to.fetch_cat(mate).outside
+            if not cat_to.fetch_cat(mate).dead 
+            and not cat_to.fetch_cat(mate).outside
         ]
         poly = len(alive_inclan_from_mates) > 0 or len(alive_inclan_to_mates) > 0
 
@@ -666,70 +667,31 @@ class Romantic_Events:
             - negative number: value has to be lower than number
 
         """
+        relation = {
+            "romantic": relationship.romantic_love,
+            "platonic": relationship.platonic_like,
+            "dislike": relationship.dislike,
+            "admiration": relationship.admiration,
+            "comfortable": relationship.comfortable,
+            "jealousy": relationship.jealousy,
+            "trust": relationship.trust
+        }
+
         if not relationship:
             return False
-        if "romantic" in condition and condition["romantic"] != 0:
-            if (
-                condition["romantic"] > 0
-                and relationship.romantic_love < condition["romantic"]
-            ):
-                return False
-            if condition["romantic"] < 0 and relationship.romantic_love > abs(
-                condition["romantic"]
-            ):
-                return False
-        if "platonic" in condition and condition["platonic"] != 0:
-            if (
-                condition["platonic"] > 0
-                and relationship.platonic_like < condition["platonic"]
-            ):
-                return False
-            if condition["platonic"] < 0 and relationship.platonic_like > abs(
-                condition["platonic"]
-            ):
-                return False
-        if "dislike" in condition and condition["dislike"] != 0:
-            if condition["dislike"] > 0 and relationship.dislike < condition["dislike"]:
-                return False
-            if condition["dislike"] < 0 and relationship.dislike > abs(
-                condition["dislike"]
-            ):
-                return False
-        if "admiration" in condition and condition["admiration"] != 0:
-            if (
-                condition["admiration"] > 0
-                and relationship.admiration < condition["admiration"]
-            ):
-                return False
-            if condition["admiration"] < 0 and relationship.admiration > abs(
-                condition["admiration"]
-            ):
-                return False
-        if "comfortable" in condition and condition["comfortable"] != 0:
-            if (
-                condition["comfortable"] > 0
-                and relationship.comfortable < condition["comfortable"]
-            ):
-                return False
-            if condition["comfortable"] < 0 and relationship.comfortable > abs(
-                condition["comfortable"]
-            ):
-                return False
-        if "jealousy" in condition and condition["jealousy"] != 0:
-            if (
-                condition["jealousy"] > 0
-                and relationship.jealousy < condition["jealousy"]
-            ):
-                return False
-            if condition["jealousy"] < 0 and relationship.jealousy > abs(
-                condition["jealousy"]
-            ):
-                return False
-        if "trust" in condition and condition["trust"] != 0:
-            if condition["trust"] > 0 and relationship.trust < condition["trust"]:
-                return False
-            if condition["trust"] < 0 and relationship.trust > abs(condition["trust"]):
-                return False
+        
+        for relation_key, relation_value in relation.items():
+            if relation_key in condition and condition[relation_key] != 0:
+                if (
+                    condition[relation_key] > 0
+                    and relation_value < condition[relation_key]
+                ):
+                    return False
+                if condition[relation_key] < 0 and relation_value > abs(
+                    condition[relation_key]
+                ):
+                    return False
+
         return True
 
     @staticmethod
