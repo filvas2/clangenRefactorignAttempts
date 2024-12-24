@@ -106,7 +106,7 @@ class Pregnancy_Events:
         )
         if second_parent and not can_have_kits:
                 return
-        elif not game.clan.clan_settings["single parentage"]:
+        elif not game.clan or not game.clan.clan_settings["single parentage"]:
                 return
 
         chance = Pregnancy_Events.get_balanced_kit_chance(
