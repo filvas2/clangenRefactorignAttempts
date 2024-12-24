@@ -232,14 +232,10 @@ class Pregnancy_Events:
             ):
                 amount = Pregnancy_Events.get_amount_of_kits(cat)
                 kits = Pregnancy_Events.get_kits(amount, cat, None, clan)
-                kit_s = "this should not display"
-                if amount == 1:
-                    kit_s = "a single kitten"
-                if amount > 1:
-                    kit_s = f"a litter of {amount} kits"
-                print_event = (
-                    f"{cat.name} brought {kit_s} back to camp, \
-                        but refused to talk about their origin."
+                print_event = i18n.t(
+                    "pregnant.pregnant_secret",
+                    name=cat.name,
+                    insert=i18n.t("pregnant.kit_amount", count=amount),
                 )
                 cats_involved = [cat.ID]
                 for kit in kits:
@@ -254,9 +250,9 @@ class Pregnancy_Events:
         second_parent = other_cat
         if (
             cat.gender == "male"
+            and not clan.clan_settings["same sex birth"]
             and other_cat is not None
             and other_cat.gender == "female"
-            and not clan.clan_settings["same sex birth"]
         ):
             pregnant_cat = other_cat
             second_parent = cat
