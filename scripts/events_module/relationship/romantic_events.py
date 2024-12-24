@@ -880,20 +880,21 @@ class Romantic_Events:
 
         chance_number = 30
         chance_number += int(relationship_from.romantic_love / 20)
-        chance_number += int(relationship_from.romantic_love / 20)
+        chance_number += int(relationship_to.romantic_love / 20)
         chance_number += int(relationship_from.platonic_like / 20)
         chance_number += int(relationship_to.platonic_like / 20)
         chance_number -= int(relationship_from.dislike / 15)
-        chance_number -= int(relationship_from.jealousy / 15)
         chance_number -= int(relationship_to.dislike / 15)
+        chance_number -= int(relationship_from.jealousy / 15)
         chance_number -= int(relationship_to.jealousy / 15)
 
         # change the change based on the personality
         get_along = get_personality_compatibility(cat_from, cat_to)
-        if get_along is not None and get_along:
-            chance_number += 5
-        if get_along is not None and not get_along:
-            chance_number -= 10
+        if get_along is not None:
+            if get_along:
+                chance_number += 5
+            else:
+                chance_number -= 10
 
         # Then, at least a 1/5 chance
         chance_number = max(chance_number, 5)
