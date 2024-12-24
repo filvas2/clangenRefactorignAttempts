@@ -118,7 +118,7 @@ class Pregnancy_Events:
                 return
         elif not game.clan or not game.clan.clan_settings["single parentage"]:
                 return
-
+        Pregnancy_Events_instance = Pregnancy_Events
         chance = Pregnancy_Events.get_balanced_kit_chance(
             cat, second_parent, is_affair, clan
         )
@@ -262,7 +262,8 @@ class Pregnancy_Events:
             "moons": 0,
             "amount": 0,
         }
-
+        
+        Pregnancy_Events.rebuild_strings()
         text = choice(Pregnancy_Events.PREGNANT_STRINGS["announcement"])
         severity = random.choices(["minor", "major"], [3, 1], k=1)
         pregnant_cat.get_injured("pregnant", severity=severity[0])
