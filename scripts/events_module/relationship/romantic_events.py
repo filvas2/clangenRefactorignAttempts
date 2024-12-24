@@ -447,8 +447,8 @@ class Romantic_Events:
         if cat_to.outside != cat_from.outside:
             return False
 
-        if not cat_to.is_potential_mate(cat_from) or not cat_from.is_potential_mate(
-            cat_to
+        if (not cat_to.is_potential_mate(cat_from) 
+            or not cat_from.is_potential_mate(cat_to)
         ):
             return False
 
@@ -461,7 +461,8 @@ class Romantic_Events:
         alive_inclan_to_mates = [
             mate
             for mate in cat_to.mate
-            if not cat_to.fetch_cat(mate).dead and not cat_to.fetch_cat(mate).outside
+            if not cat_to.fetch_cat(mate).dead 
+            and not cat_to.fetch_cat(mate).outside
         ]
         poly = len(alive_inclan_from_mates) > 0 or len(alive_inclan_to_mates) > 0
 
@@ -483,7 +484,6 @@ class Romantic_Events:
         # second acceptance chance if the romantic is high enough
         elif (
             "romantic" in condition
-            and condition["romantic"] != 0
             and condition["romantic"] > 0
             and rel_to_check.romantic_love >= condition["romantic"] * 1.5
         ):
