@@ -788,51 +788,34 @@ class Romantic_Events:
     def prepare_relationship_string(mate_string, cat_from, cat_to):
         """Prepares the relationship event string for display"""
         # replace mates with their names
-        if "[m_c_mates]" in mate_string:
-            mate_names = [
-                str(cat_from.fetch_cat(mate_id).name)
-                for mate_id in cat_from.mate
-                if cat_from.fetch_cat(mate_id) is not None
-                and not cat_from.fetch_cat(mate_id).dead
-                and not cat_from.fetch_cat(mate_id).outside
-            ]
-            mate_name_string = mate_names[0]
-            if len(mate_names) == 2:
-                mate_name_string = mate_names[0] + " and " + mate_names[1]
-            if len(mate_names) > 2:
-                mate_name_string = (
-                    ", ".join(mate_names[:-1]) + ", and " + mate_names[-1]
-                )
-            mate_string = mate_string.replace("[m_c_mates]", mate_name_string)
 
-        if "[r_c_mates]" in mate_string:
-            mate_names = [
-                str(cat_to.fetch_cat(mate_id).name)
-                for mate_id in cat_to.mate
-                if cat_to.fetch_cat(mate_id) is not None
-                and not cat_to.fetch_cat(mate_id).dead
-                and not cat_to.fetch_cat(mate_id).outside
-            ]
-            mate_name_string = mate_names[0]
-            if len(mate_names) == 2:
-                mate_name_string = mate_names[0] + " and " + mate_names[1]
-            if len(mate_names) > 2:
-                mate_name_string = (
-                    ", ".join(mate_names[:-1]) + ", and " + mate_names[-1]
-                )
-            mate_string = mate_string.replace("[r_c_mates]", mate_name_string)
+        cats = {
+            "m_c":cat_from,
+            "r_c":cat_to,
+        }
+        for cat_string, cat in cats.items():
+            if f"[{cat_string}_mates]" in mate_string:
+                mate_names = [
+                    str(cat.fetch_cat(mate_id).name)
+                    for mate_id in cat.mate
+                    if cat.fetch_cat(mate_id) is not None
+                    and not cat.fetch_cat(mate_id).dead
+                    and not cat.fetch_cat(mate_id).outside
+                ]
+                mate_name_string = mate_names[0]
+                if len(mate_names) == 2:
+                    mate_name_string = mate_names[0] + " and " + mate_names[1]
+                if len(mate_names) > 2:
+                    mate_name_string = (
+                        ", ".join(mate_names[:-1]) + ", and " + mate_names[-1]
+                    )
+                mate_string = mate_string.replace(f"[{cat_string}_mates]", mate_name_string)
 
-        if "(m_c_mate/mates)" in mate_string:
-            insert = "mate"
-            if len(cat_from.mate) > 1:
-                insert = "mates"
-            mate_string = mate_string.replace("(m_c_mate/mates)", insert)
-
-        if "(r_c_mate/mates)" in mate_string:
-            insert = "mate"
-            if len(cat_to.mate) > 1:
-                insert = "mates"
-            mate_string = mate_string.replace("(r_c_mate/mates)", insert)
+            if f"({cat_string}_mate/mates)" in mate_string:
+                insert = "mate"
+                if len(cat.mate) > 1:
+                    insert = "mates"
+                mate_string = mate_string.replace(f"({cat_string}_mate/mates)", insert)
 
         mate_string = event_text_adjust(Cat, mate_string, main_cat=cat_from, random_cat=cat_to)
         return mate_string
