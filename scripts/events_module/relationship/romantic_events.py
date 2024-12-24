@@ -687,8 +687,9 @@ class Romantic_Events:
                     and relation_value < condition[relation_key]
                 ):
                     return False
-                if condition[relation_key] < 0 and relation_value > abs(
-                    condition[relation_key]
+                if (
+                    condition[relation_key] < 0 
+                    and relation_value > abs(condition[relation_key])
                 ):
                     return False
 
