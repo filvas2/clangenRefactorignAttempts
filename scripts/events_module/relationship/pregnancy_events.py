@@ -183,9 +183,9 @@ class Pregnancy_Events:
             count=amount,
         )
 
-        cats_involved = [cat.ID]
+        cats_involved = {"m_c": cat}
         if other_cat:
-            cats_involved.append(other_cat.ID)
+            cats_involved["r_c"] = other_cat
         for kit in kits:
             kit.thought = "hardcoded.new_kit_thought"
 
@@ -198,7 +198,7 @@ class Pregnancy_Events:
         cat.birth_cooldown = game.config["pregnancy"]["birth_cooldown"]
 
         game.cur_events_list.append(
-            Single_Event(print_event, "birth_death", cats_involved)
+            Single_Event(print_event, "birth_death", cat_dict=cats_involved)
         )
 
     @staticmethod
@@ -325,7 +325,9 @@ class Pregnancy_Events:
             print("Is this an old save? Cat does not have the pregnant condition")
 
         text = event_text_adjust(Cat, text, main_cat=cat, clan=game.clan)
-        game.cur_events_list.append(Single_Event(text, "birth_death", cat.ID))
+        game.cur_events_list.append(
+            Single_Event(text, "birth_death", cat_dict={"m_c": cat})
+        )
 
     @staticmethod
     def handle_two_moon_pregnant(cat: Cat, clan=game.clan):
@@ -339,6 +341,7 @@ class Pregnancy_Events:
             return
 
         involved_cats = [cat.ID]
+        cat_dict = {"m_c": cat}
 
         kits_amount = clan.pregnancy_data[cat.ID]["amount"]
         if (
@@ -389,26 +392,30 @@ class Pregnancy_Events:
             if other_cat and not other_cat.outside:
                 adding_text = choice(events["birth"]["outside_in_clan"])
             event_list.append(adding_text)
-        elif other_cat.ID in cat.mate:
-            if not other_cat.dead and not other_cat.outside:
-                involved_cats.append(other_cat.ID)
-                event_list.append(choice(events["birth"]["two_parents"]))
-            elif other_cat.dead or other_cat.outside:
-                involved_cats.append(other_cat.ID)
-                event_list.append(choice(events["birth"]["dead_mate"]))
+        elif other_cat.ID in cat.mate and not other_cat.dead and not other_cat.outside:
+            involved_cats.append(other_cat.ID)
+            cat_dict["r_c"] = other_cat
+            event_list.append(choice(events["birth"]["two_parents"]))
+        elif other_cat.ID in cat.mate and other_cat.dead or other_cat.outside:
+            involved_cats.append(other_cat.ID)
+            cat_dict["r_c"] = other_cat
+            event_list.append(choice(events["birth"]["dead_mate"]))
         elif len(cat.mate) < 1 and len(other_cat.mate) < 1 and not other_cat.dead:
             involved_cats.append(other_cat.ID)
+            cat_dict["r_c"] = other_cat
             event_list.append(choice(events["birth"]["both_unmated"]))
-        elif not other_cat.dead:
-            if(
-                len(cat.mate) > 0 and other_cat.ID not in cat.mate
-               ) or (
-                len(other_cat.mate) > 0 and cat.ID not in other_cat.mate
-            ):
-                involved_cats.append(other_cat.ID)
-                event_list.append(choice(events["birth"]["affair"]))
-                if len(cat.mate) > 0:
-                    event_list.append(choice(events["birth"]["affair_mated"]))
+        elif (
+            len(cat.mate) > 0 and other_cat.ID not in cat.mate and not other_cat.dead
+        ) or (
+            len(other_cat.mate) > 0
+            and cat.ID not in other_cat.mate
+            and not other_cat.dead
+        ):
+            involved_cats.append(other_cat.ID)
+            cat_dict["r_c"] = other_cat
+            event_list.append(choice(events["birth"]["affair"]))
+            if len(cat.mate) > 0:
+                event_list.append(choice(events["birth"]["affair_mated"]))
         else:
             event_list.append(choice(events["birth"]["unmated_parent"]))
 
@@ -490,7 +497,9 @@ class Pregnancy_Events:
 
         # display event
         game.cur_events_list.append(
-            Single_Event(print_event, ["health", "birth_death"], involved_cats)
+            Single_Event(
+                print_event, ["health", "birth_death"], involved_cats, cat_dict=cat_dict
+            )
         )
 
     # ---------------------------------------------------------------------------- #
@@ -512,7 +521,8 @@ class Pregnancy_Events:
         # decide chances of having kits, and if it's possible at all.
         # Including - age, dead statis, having kits turned off.
         not_correct_age = (
-            cat.age in [CatAgeEnum.NEWBORN, CatAgeEnum.KITTEN, CatAgeEnum.ADOLESCENT] or cat.moons < 15
+            cat.age in [CatAgeEnum.NEWBORN, CatAgeEnum.KITTEN, CatAgeEnum.ADOLESCENT]
+            or cat.moons < 15
         )
         if not_correct_age:
             return False
@@ -918,7 +928,9 @@ class Pregnancy_Events:
     def get_amount_of_kits(cat):
         """Get the amount of kits which will be born."""
         min_kits = game.config["pregnancy"]["min_kits"]
-        min_kit = [min_kits] * game.config["pregnancy"]["one_kit_possibility"][cat.age.value]
+        min_kit = [min_kits] * game.config["pregnancy"]["one_kit_possibility"][
+            cat.age.value
+        ]
         two_kits = [min_kits + 1] * game.config["pregnancy"]["two_kit_possibility"][
             cat.age.value
         ]
