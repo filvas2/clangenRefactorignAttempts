@@ -222,6 +222,8 @@ class Pregnancy_Events:
         if (cat and cat.no_kits) or (other_cat and other_cat.no_kits):
             return
 
+        pregnant_cat = cat
+        second_parent = other_cat
         if clan.clan_settings["same sex birth"]:
             # 50/50 for single cats to get pregnant or just bring a litter back
             if not other_cat and random.randint(0, 1):
@@ -233,32 +235,14 @@ class Pregnancy_Events:
                     insert=i18n.t("conditions.pregnancy.kit_amount", count=amount),
                 )
                 cats_involved = [cat.ID]
-                cat_dict = {"m_c": cat}
                 for kit in kits:
                     cats_involved.append(kit.ID)
                 game.cur_events_list.append(
                     Single_Event(
-                        print_event, "birth_death", cats_involved, cat_dict=cat_dict
+                        print_event, "birth_death", cats_involved, cat_dict={"m_c": cat}
                     )
                 )
                 return
-
-            # same sex birth enables all cats to get pregnant,
-            # therefore the main cat will be used, regarding of gender
-            clan.pregnancy_data[cat.ID] = {
-                "second_parent": str(other_cat.ID) if other_cat else None,
-                "moons": 0,
-                "amount": 0,
-            }
-            text = choice(Pregnancy_Events.PREGNANT_STRINGS["announcement"])
-            severity = random.choices(["minor", "major"], [3, 1], k=1)
-            cat.get_injured("pregnant", severity=severity[0])
-            text += choice(Pregnancy_Events.PREGNANT_STRINGS[f"{severity[0]}_severity"])
-
-            text = event_text_adjust(Cat, text, main_cat=cat, clan=clan)
-            game.cur_events_list.append(
-                Single_Event(text, "birth_death", cat.ID, cat_dict={"m_c": cat})
-            )
         else:
             if not other_cat and cat.gender == "male":
                 amount = Pregnancy_Events.get_amount_of_kits(cat)
@@ -277,10 +261,6 @@ class Pregnancy_Events:
                     )
                 )
                 return
-
-            # if the other cat is afab and the current cat is amab, make the afab cat pregnant
-            pregnant_cat = cat
-            second_parent = other_cat
             if (
                 cat.gender == "male"
                 and other_cat is not None
@@ -289,22 +269,21 @@ class Pregnancy_Events:
                 pregnant_cat = other_cat
                 second_parent = cat
 
-            clan.pregnancy_data[pregnant_cat.ID] = {
-                "second_parent": str(second_parent.ID) if second_parent else None,
-                "moons": 0,
-                "amount": 0,
-            }
-
-            text = choice(Pregnancy_Events.PREGNANT_STRINGS["announcement"])
-            severity = random.choices(["minor", "major"], [3, 1], k=1)
-            pregnant_cat.get_injured("pregnant", severity=severity[0])
-            text += choice(Pregnancy_Events.PREGNANT_STRINGS[f"{severity[0]}_severity"])
-            text = event_text_adjust(Cat, text, main_cat=pregnant_cat, clan=clan)
-            game.cur_events_list.append(
-                Single_Event(
-                    text, "birth_death", pregnant_cat.ID, cat_dict={"m_c": cat}
-                )
+        clan.pregnancy_data[pregnant_cat.ID] = {
+            "second_parent": str(second_parent.ID) if second_parent else None,
+            "moons": 0,
+            "amount": 0,
+        }
+        text = choice(Pregnancy_Events.PREGNANT_STRINGS["announcement"])
+        severity = random.choices(["minor", "major"], [3, 1], k=1)
+        pregnant_cat.get_injured("pregnant", severity=severity[0])
+        text += choice(Pregnancy_Events.PREGNANT_STRINGS[f"{severity[0]}_severity"])
+        text = event_text_adjust(Cat, text, main_cat=pregnant_cat, clan=clan)
+        game.cur_events_list.append(
+            Single_Event(
+                text, "birth_death", pregnant_cat.ID, cat_dict={"m_c": cat}
             )
+        )
 
     @staticmethod
     def handle_one_moon_pregnant(cat: Cat, clan=game.clan):
